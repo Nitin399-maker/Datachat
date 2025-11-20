@@ -113,7 +113,7 @@ $demos.addEventListener("click", async (e) => {
 const db = new sqlite3.oo1.DB(defaultDB, "c");
 const DB = {
   context: "",
-  explainPrompt: "You are a business analyst explaining data insights. Based on the database schema, user's question, SQL analysis, and query results, provide a single, plain English paragraph that summarizes the key business insights and findings in a way that non-technical stakeholders can understand. Focus on what the data reveals about business trends, patterns, or actionable insights.",
+  explainPrompt: "You are a analyst explaining data insights. Based on the database schema, user's question, SQL analysis, and query results, provide a single, plain English paragraph that summarizes the key business insights and findings in a way that non-technical stakeholders can understand. Focus on what the data reveals about business trends, patterns, or actionable insights.",
   schema: function () {
     let tables = [];
     db.exec("SELECT name, sql FROM sqlite_master WHERE type='table'", { rowMode: "object" }).forEach((table) => {
@@ -128,7 +128,7 @@ const DB = {
   questions: async function () {
     if (DB.questionInfo.schema !== JSON.stringify(DB.schema())) {
       const response = await llm({
-        system: "Suggest 5 diverse, useful questions(one liner) that a user can answer from this dataset using SQLite",
+        system: "Suggest 5 diverse, useful questions(must be one liner) that a user can answer from this dataset using SQLite",
         user: DB.schema()
           .map(({ sql }) => sql)
           .join("\n\n"),
@@ -526,7 +526,7 @@ ${DB.schema().map(({ sql }) => sql).join("\n\n")}
 User Question: ${currentQuery}
 SQL Analysis: ${currentLLMResponse}
 Query Results (first 5 rows):
-${JSON.stringify(latestQueryResult.slice(0, 5), null, 2)}
+${JSON.stringify(latestQueryResult)}
 Total rows returned: ${latestQueryResult.length}
     `;
     const explanation = await llm({
